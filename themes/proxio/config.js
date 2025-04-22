@@ -24,9 +24,9 @@ const CONFIG = {
 
     // 文章区块
     PROXIO_BLOG_ENABLE: true, // 首页博文区块开关
-    PROXIO_BLOG_TITLE: '作品',
+    PROXIO_BLOG_TITLE: '记录',
     PROXIO_BLOG_COUNT: 4, // 首页博文区块展示前4篇文章
-    PROXIO_BLOG_TEXT_1: '我的最新动态',
+    PROXIO_BLOG_TEXT_1: '诣宝最新动态',
 
     // 区块默认内容显示文章的summary文本，但也支持用自定义图片或logo德国替换掉占位显示内容
     PROXIO_BLOG_PLACEHOLDER_IMG_URL_1: '', // 填写要替换成的图片，支持图床或直接上传到项目中，示例  /images/feature-1.webp
@@ -39,35 +39,35 @@ const CONFIG = {
 
     // 特性区块
     PROXIO_FEATURE_ENABLE: true, // 特性区块开关
-    PROXIO_FEATURE_TITLE: '为什么选我',
-    PROXIO_FEATURE_TEXT_1: '我能让您的项目焕发光彩',
+    PROXIO_FEATURE_TITLE: '为什么选择诣宝',
+    PROXIO_FEATURE_TEXT_1: '像树苗拥抱阳光，我们收藏诣宝的每一次伸展。',
     PROXIO_FEATURE_TEXT_2:
-        '丰富的案例经验，专业的技术服务，优质的沟通效率',
+        '记录点滴成长，珍藏每一份美好',
 
     // 特性1
     PROXIO_FEATURE_1_ICON_CLASS: 'fa-solid fa-stopwatch', // fas图标
     PROXIO_FEATURE_1_ICON_IMG_URL: '', // 图片图标选填，默认是fas图标，如果需要图片图标可以填写图片地址，示例/avatar.png
-    PROXIO_FEATURE_1_TITLE_1: '高效工作流程',
-    PROXIO_FEATURE_1_TEXT_1: '精简的设计流程确保快速交付，在紧迫的工期下仍能保证品质与细节不打折扣。',
+    PROXIO_FEATURE_1_TITLE_1: '全天候在线，成长不掉线',
+    PROXIO_FEATURE_1_TEXT_1: '从清晨到深夜，都有诣宝的每一声笑与每一次闹！',
 
     PROXIO_FEATURE_2_ICON_CLASS: 'fa-solid fa-comments',
     PROXIO_FEATURE_2_ICON_IMG_URL: '', 
-    PROXIO_FEATURE_2_TITLE_1: '协作式流程',
-    PROXIO_FEATURE_2_TEXT_1: '与你紧密合作，融合反馈意见，打造超越预期的设计',
+    PROXIO_FEATURE_2_TITLE_1: '群聊人气王，圈粉无死角',
+    PROXIO_FEATURE_2_TEXT_1: '萌诣魅力值拉满，群友集体变‘妈粉/爸粉’！',
 
     PROXIO_FEATURE_3_ICON_CLASS: 'fa-solid fa-search',
     PROXIO_FEATURE_2_ICON_IMG_URL: '',
-    PROXIO_FEATURE_3_TITLE_1: '细节把控',
-    PROXIO_FEATURE_3_TEXT_1: '精益求精雕琢每个元素，确保成品精致统一，令人过目难忘',
+    PROXIO_FEATURE_3_TITLE_1: '发癫式营业，能量永不断',
+    PROXIO_FEATURE_3_TEXT_1: '表情包轰炸+深夜小作文，群聊冷场终结者！',
 
     PROXIO_FEATURE_BUTTON_TEXT: '了解更多', // 按钮文字
-    PROXIO_FEATURE_BUTTON_URL: 'https://github.com/tangly1024/NotionNext', // 按钮跳转
+    PROXIO_FEATURE_BUTTON_URL: 'https://mvwebfs.kugou.com/202504221935/b8afcf6d37a1cf18e802cbed6b7a4c21/KGTX/CLTX002/5a6e9d1b6c4851280043274d4e4270b7.mp4', // 按钮跳转
 
     // 首页生涯区块
     PROXIO_CAREER_ENABLE: true, // 区块开关
     PROXIO_CAREER_TITLE: '生涯',
     PROXIO_CAREER_TEXT:
-        '以下是我的职业生涯',
+        '诣宝的每一步，都是未来的光',
 
     // 生涯内容卡牌 ，title是标题 ，bio是备注，text是详情
     PROXIO_CAREERS: [
@@ -78,13 +78,13 @@ const CONFIG = {
 
     // 首页用户测评区块
     PROXIO_TESTIMONIALS_ENABLE: true, // 测评区块开关
-    PROXIO_TESTIMONIALS_TITLE: '用户反馈',
-    PROXIO_TESTIMONIALS_TEXT_1: '我们的用户怎么说',
+    PROXIO_TESTIMONIALS_TITLE: '网友反馈',
+    PROXIO_TESTIMONIALS_TEXT_1: '群友们怎么说',
     PROXIO_TESTIMONIALS_TEXT_2:
-        '数千位站长选择用NotionNext搭建他们的网站,通过帮助手册、交流社群以及技术咨询，大家成功上线了自己的网站',
+        '数百位群友共同见证诣宝的成长瞬间！从「24小时发癫」的暖心陪伴，到「轰炸式南梁营业」的欢乐名场面，大家通过每日打卡、表情包互动和深夜畅聊，在欢笑中记录了无数成长里程碑——',
 
     // 用户测评处的跳转按钮
-    PROXIO_TESTIMONIALS_BUTTON_URL: '/about',
+    PROXIO_TESTIMONIALS_BUTTON_URL: 'https://mvwebfs.tx.kugou.com/202504221939/755223231bad91ad70c4f9c6987ecd7f/v2/660e59b94afdab0c95dc7b7e9ec21a57/KGTX/CLTX002/660e59b94afdab0c95dc7b7e9ec21a57.mp4',
     PROXIO_TESTIMONIALS_BUTTON_TEXT: '联系我',
 
     // 这里不支持CONFIG和环境变量，需要一一修改此处代码。
