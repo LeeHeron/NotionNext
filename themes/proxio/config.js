@@ -12,9 +12,9 @@ const CONFIG = {
     // 英雄区两个按钮，如果TEXT留空则隐藏按钮
     PROXIO_HERO_BUTTON_1_TEXT: '进入私密专区', // 英雄区按钮
     PROXIO_HERO_BUTTON_1_URL:
-        'https://www.bilibili.com/video/BV1GJ411x7h7', // 英雄区按钮
-    PROXIO_HERO_BUTTON_2_TEXT: '在bilibili上关注', // 英雄区按钮
-    PROXIO_HERO_BUTTON_2_URL: 'https://www.bilibili.com/video/BV1fCpTeKEfw', // 英雄区按钮
+        'https://mvwebfs.tx.kugou.com/202504231219/ce55c363a9493022621de81f642fb488/v2/b0e151c356174bdd7c21155b4769bc18/G099/M08/1C/19/A4cBAFjnOQyAf1KOBZRArKAG1sQ795.mp4', // 英雄区按钮
+    PROXIO_HERO_BUTTON_2_TEXT: '与诣宝一起玩游戏', // 英雄区按钮
+    PROXIO_HERO_BUTTON_2_URL: 'https://ys-api.mihoyo.com/event/download_porter/link/ys_cn/official/pc_default', // 英雄区按钮
     PROXIO_HERO_BUTTON_2_ICON: '/images/starter/github.svg', // 英雄区按钮2的图标，不需要则留空
 
     // 英雄区配图，如需隐藏，改为空值即可 ''
@@ -158,10 +158,10 @@ const CONFIG = {
 
     // 关于作者区块
     PROXIO_ABOUT_ENABLE: true, // 关于作者区块区块开关
-    PROXIO_ABOUT_TITLE: '关于作者',
-    PROXIO_ABOUT_TEXT_1: 'I am an Architect Turned Into a Product Designer',
+    PROXIO_ABOUT_TITLE: '关于诣宝',
+    PROXIO_ABOUT_TEXT_1: '一个让你爱上成长的活力伙伴',
     PROXIO_ABOUT_TEXT_2:
-        'With a background in architecture, I now apply my expertise to product design, blending aesthetics, functionality, and innovation. My goal is to create modern, user-focused designs that bring your vision to life.',
+        '他是群里最受欢迎的“云养崽崽”——诣宝用奶声奶气的语音轰炸、歪歪马马扭扭的游戏录像，和突然蹦出的“人类幼崽迷惑发言”，承包了群友每日的快乐源泉。从第一次摇摇晃晃学会放下，到偷偷把糖果藏在喇叭里，他的成长日记没有滤镜，只有最鲜活的生命力。“看他长大，像养了个电子哈基米，但比猫更费力！”（@每天马枪の群主 含泪认证）',
     PROXIO_ABOUT_PHOTO_URL: '/avatar.png',
     PROXIO_ABOUT_KEY_1: '经验年限',
     PROXIO_ABOUT_VAL_1: '10年+',
@@ -172,7 +172,7 @@ const CONFIG = {
     PROXIO_ABOUT_KEY_4: '累积创作时长（小时）',
     PROXIO_ABOUT_VAL_4: '10000+',
 
-    PROXIO_ABOUT_BUTTON_URL: '/about',
+    PROXIO_ABOUT_BUTTON_URL: 'https://baike.baidu.com/item/%E5%94%90%E7%BA%B3%E5%BE%B7%C2%B7%E7%89%B9%E6%9C%97%E6%99%AE/9916449',
     PROXIO_ABOUT_BUTTON_TEXT: '关于我',
 
     // 横向滚动文字
