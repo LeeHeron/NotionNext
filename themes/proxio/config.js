@@ -3,8 +3,7 @@
  */
 const CONFIG = {
     PROXIO_WELCOME_COVER_ENABLE: true, //是否显示页面进入的欢迎文字
-    PROXIO_WELCOME_TEXT_1: '成长有迹可循', 
-    PROXIO_WELCOME_TEXT_2: '爱意无限延伸', // 欢迎文字，留空则不启用
+    PROXIO_WELCOME_TEXT: '成长有迹可循，爱意无限延伸', 
 
     // 英雄区块导航
     PROXIO_HERO_ENABLE: true, // 开启英雄区
@@ -92,12 +91,12 @@ const CONFIG = {
     PROXIO_TESTIMONIALS_ITEMS: [
         {
             PROXIO_TESTIMONIALS_ITEM_TEXT:
-                '感谢大佬的方法。之前尝试过Super、Potion等国外的第三方平台，实现效果一般，个性化程度远不如这个方法，已经用起来了！ ',
+                '太厉害了，诣宝当小机长飞过大海的时候心率能到一百八！ ',
             PROXIO_TESTIMONIALS_ITEM_AVATAR:
-                'https://www.notion.so/image/https%3A%2F%2Fs3-us-west-2.amazonaws.com%2Fsecure.notion-static.com%2F22de3fcb-d90d-4271-bc01-f815f476122b%2F4FE0A0C0-E487-4C74-BF8E-6F01A27461B8-14186-000008094BC289A6.jpg?table=collection&id=a320a2cc-6ebe-4a8d-95cc-ea94e63bced9&width=200',
-            PROXIO_TESTIMONIALS_ITEM_NICKNAME: 'Ryan_G',
-            PROXIO_TESTIMONIALS_ITEM_DESCRIPTION: 'Ryan`Log 站长',
-            PROXIO_TESTIMONIALS_ITEM_URL: 'https://blog.gaoran.xyz/'
+                '/Account cancelled.jpg',
+            PROXIO_TESTIMONIALS_ITEM_NICKNAME: '账号已注销',
+            PROXIO_TESTIMONIALS_ITEM_DESCRIPTION: '一群群友',
+            PROXIO_TESTIMONIALS_ITEM_URL: 'https://health.baidu.com/m/detail/ar_546639625444983042'
         },
         {
             PROXIO_TESTIMONIALS_ITEM_TEXT:
