@@ -3,7 +3,8 @@
  */
 const CONFIG = {
     PROXIO_WELCOME_COVER_ENABLE: true, //是否显示页面进入的欢迎文字
-    PROXIO_WELCOME_TEXT: '成长有迹可循，爱意无限延伸', // 欢迎文字，留空则不启用
+    PROXIO_WELCOME_TEXT_1: '成长有迹可循', 
+    PROXIO_WELCOME_TEXT_2: '爱意无限延伸', // 欢迎文字，留空则不启用
 
     // 英雄区块导航
     PROXIO_HERO_ENABLE: true, // 开启英雄区
