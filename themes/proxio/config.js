@@ -102,7 +102,7 @@ const CONFIG = {
             PROXIO_TESTIMONIALS_ITEM_TEXT:
                 '诣宝经常抱他裸着的哥们',
             PROXIO_TESTIMONIALS_ITEM_AVATAR:
-                '/images/gunfu.jpg',
+                '/gunfu.jpg',
             PROXIO_TESTIMONIALS_ITEM_NICKNAME: '棍父',
             PROXIO_TESTIMONIALS_ITEM_DESCRIPTION: '东京不知名高中生',
             PROXIO_TESTIMONIALS_ITEM_URL: 'https://zh.moegirl.org.cn/%E7%94%B7%E5%AD%90%E9%AB%98%E4%B8%AD%E7%94%9F%E7%9A%84%E6%97%A5%E5%B8%B8'
@@ -111,7 +111,7 @@ const CONFIG = {
             PROXIO_TESTIMONIALS_ITEM_TEXT:
                 '诣宝不是宝贝，是真沙贝',
             PROXIO_TESTIMONIALS_ITEM_AVATAR:
-                '/images/litaton.jpg',
+                '/litaton.jpg',
             PROXIO_TESTIMONIALS_ITEM_NICKNAME: '丽塔欧恩 蛋赞先生',
             PROXIO_TESTIMONIALS_ITEM_DESCRIPTION: '超比养老院门口坐着的百岁大爷',
             PROXIO_TESTIMONIALS_ITEM_URL: 'https://i0.hdslb.com/bfs/archive/d6cf835c590379db77703b13831f9fe9279879fc.jpg'
@@ -120,7 +120,7 @@ const CONFIG = {
             PROXIO_TESTIMONIALS_ITEM_TEXT:
                 '他（诣宝）真像个小美女，就是不喜欢刮毛',
             PROXIO_TESTIMONIALS_ITEM_AVATAR:
-                '/images/hognxia.jpg',
+                '/hognxia.jpg',
             PROXIO_TESTIMONIALS_ITEM_NICKNAME: 'ICE',
             PROXIO_TESTIMONIALS_ITEM_DESCRIPTION: '下北泽starry吧台の乐队皇帝',
             PROXIO_TESTIMONIALS_ITEM_URL: 'https://www.bilibili.com/bangumi/play/ss43164'
@@ -129,7 +129,7 @@ const CONFIG = {
             PROXIO_TESTIMONIALS_ITEM_TEXT:
                 '诣宝他本质是低电的、悲观的、成为自己的英雄。',
             PROXIO_TESTIMONIALS_ITEM_AVATAR:
-                '/images/wuya.jpg',
+                '/wuya.jpg',
             PROXIO_TESTIMONIALS_ITEM_NICKNAME: '群乌鸦-星袅',
             PROXIO_TESTIMONIALS_ITEM_DESCRIPTION: '世外神人，答辩大师，在大雷界中享有很高的声望。',
             PROXIO_TESTIMONIALS_ITEM_URL: 'https://pic.kts.g.mi.com/3dee90f169b3b6de2c855eddd0ea48805170131967573719558.jpg'
