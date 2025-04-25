@@ -3,7 +3,7 @@
  */
 const CONFIG = {
     PROXIO_WELCOME_COVER_ENABLE: true, //是否显示页面进入的欢迎文字
-    PROXIO_WELCOME_TEXT: '成长有迹可循\n爱意无限延伸', 
+    PROXIO_WELCOME_TEXT: '成长有迹可循 爱意无限延伸', 
 
     // 英雄区块导航
     PROXIO_HERO_ENABLE: true, // 开启英雄区
@@ -71,7 +71,7 @@ const CONFIG = {
 
     // 生涯内容卡牌 ，title是标题 ，bio是备注，text是详情
     PROXIO_CAREERS: [
-        { title: '纯真时期', bio: '2013-2024', text: '曾是群聊团宠，用“奥特曼卡片外交”称霸小区，把暑假作业藏冰箱谎称“知识需要冷藏保鲜”，因坚信自己是哈利波特中国分校落榜生而绝食三天。群友至今仍在用他的童年语音包（“姐姐你好像会发光的粽子哦”）当起床闹铃。' },
+        { title: '纯真时期', bio: '2023-2024', text: '曾是群聊团宠，用“奥特曼卡片外交”称霸小区，把暑假作业藏冰箱谎称“知识需要冷藏保鲜”，因坚信自己是哈利波特中国分校落榜生而绝食三天。群友至今仍在用他的童年语音包（“姐姐你好像会发光的粽子哦”）当起床闹铃。' },
         { title: '叛逆时期', bio: '2024-2025', text: '染过七天掉色的荧光紫刘海，在班群发《论食堂鸡腿缩水与资本剥削的关联性》被校长约谈，深夜转发伤痛文学配文“宇宙是块过期蛋糕，而我是上面的霉”。群友为挽救其社交生命值，众筹编写《高中生社会入门手册》，却被他改成《如何科学地让全世界觉得你死了但没完全死》。' },
         { title: '入定时期', bio: '2025-Now', text: '突然从“45度仰卧起坐”进化为“恒温37度正常生物”，发明“男同学的大腿比女同学更软”理论，在月考作文写《论早自习与蒙德骑士练习的相似性》获零分并登上校园暗网热搜。面对群友咆哮“天天谈恋爱怎么办”，淡定回应：“我给烤冷面摊王叔当互联网军师，三年内上市，饿不死。”群友锐评：“他活成了我老板买不起的样子。”' }
     ],
@@ -102,7 +102,7 @@ const CONFIG = {
             PROXIO_TESTIMONIALS_ITEM_TEXT:
                 '诣宝经常抱他裸着的哥们',
             PROXIO_TESTIMONIALS_ITEM_AVATAR:
-                '/public/images/gunfu.jpg',
+                '/images/gunfu.jpg',
             PROXIO_TESTIMONIALS_ITEM_NICKNAME: '棍父',
             PROXIO_TESTIMONIALS_ITEM_DESCRIPTION: '东京不知名高中生',
             PROXIO_TESTIMONIALS_ITEM_URL: 'https://zh.moegirl.org.cn/%E7%94%B7%E5%AD%90%E9%AB%98%E4%B8%AD%E7%94%9F%E7%9A%84%E6%97%A5%E5%B8%B8'
@@ -111,7 +111,7 @@ const CONFIG = {
             PROXIO_TESTIMONIALS_ITEM_TEXT:
                 '诣宝不是宝贝，是真沙贝',
             PROXIO_TESTIMONIALS_ITEM_AVATAR:
-                '/public/images/litaton.jpg',
+                '/images/litaton.jpg',
             PROXIO_TESTIMONIALS_ITEM_NICKNAME: '丽塔欧恩 蛋赞先生',
             PROXIO_TESTIMONIALS_ITEM_DESCRIPTION: '超比养老院门口坐着的百岁大爷',
             PROXIO_TESTIMONIALS_ITEM_URL: 'https://i0.hdslb.com/bfs/archive/d6cf835c590379db77703b13831f9fe9279879fc.jpg'
@@ -120,7 +120,7 @@ const CONFIG = {
             PROXIO_TESTIMONIALS_ITEM_TEXT:
                 '他（诣宝）真像个小美女，就是不喜欢刮毛',
             PROXIO_TESTIMONIALS_ITEM_AVATAR:
-                '/public/images/hognxia.jpg',
+                '/images/hognxia.jpg',
             PROXIO_TESTIMONIALS_ITEM_NICKNAME: 'ICE',
             PROXIO_TESTIMONIALS_ITEM_DESCRIPTION: '下北泽starry吧台の乐队皇帝',
             PROXIO_TESTIMONIALS_ITEM_URL: 'https://www.bilibili.com/bangumi/play/ss43164'
@@ -129,7 +129,7 @@ const CONFIG = {
             PROXIO_TESTIMONIALS_ITEM_TEXT:
                 '诣宝他本质是低电的、悲观的、成为自己的英雄。',
             PROXIO_TESTIMONIALS_ITEM_AVATAR:
-                '/public/images/wuya.jpg',
+                '/images/wuya.jpg',
             PROXIO_TESTIMONIALS_ITEM_NICKNAME: '群乌鸦-星袅',
             PROXIO_TESTIMONIALS_ITEM_DESCRIPTION: '世外神人，答辩大师，在大雷界中享有很高的声望。',
             PROXIO_TESTIMONIALS_ITEM_URL: 'https://pic.kts.g.mi.com/3dee90f169b3b6de2c855eddd0ea48805170131967573719558.jpg'
@@ -178,10 +178,14 @@ const CONFIG = {
     // 横向滚动文字
     PROXIO_BRANDS_ENABLE: true, // 滚动文字
     PROXIO_BRANDS: [
-        'Web Design',
-        'Logo Design',
-        'Mobile App Design',
-        'Product Design'
+        '管道疏通',
+        '瑟晶管理',
+        '派派代打',
+        '关系导师',
+        '女装穿搭',
+        '下头指导',
+        '浴足交流',
+        '深夜陪聊'
     ],
 
     PROXIO_FOOTER_SLOGAN: '陪诣宝长大，让时光有温度。',
