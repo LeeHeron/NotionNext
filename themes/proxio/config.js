@@ -237,7 +237,7 @@ const CONFIG = {
     PROXIO_FOOTER_PRIVACY_TERMS_OF_SERVICE_URL: '/terms-of-use',
 
     // 404页面的提示语
-    PROXIO_404_TITLE: '我们似乎找不到您要找的页面。',
+    PROXIO_404_TITLE: '不见了，可能被诣宝偷偷玩坏了',
     PROXIO_404_TEXT: '抱歉！您要查找的页面不存在。可能已经移动或删除。',
     PROXIO_404_BACK: '回到主页',
 
