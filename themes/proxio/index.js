@@ -43,6 +43,7 @@ import Lenis from '@/components/Lenis'
 import Announcement from './components/Announcement'
 import CursorDot from '@/components/CursorDot'
 import LoadingCover from './components/LoadingCover'
+import EmojiReaction from '@/themes/proxio/components/EmojiReaction'
 
 /**
  * 布局框架
