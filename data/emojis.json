@@ -1,1 +1,23 @@
-{}
+[
+  {
+    "name": "thumbs_up",
+    "symbol": "👍",
+    "description": "点赞"
+  },
+  {
+    "name": "heart",
+    "symbol": "❤️",
+    "description": "喜欢"
+  },
+  {
+    "name": "clap",
+    "symbol": "👏",
+    "description": "鼓掌"
+  },
+  {
+    "name": "fire",
+    "symbol": "🔥",
+    "description": "火热"
+  }
+  // 继续追加
+]
