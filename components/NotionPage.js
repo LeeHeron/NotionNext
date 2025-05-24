@@ -6,7 +6,6 @@ import 'katex/dist/katex.min.css'
 import dynamic from 'next/dynamic'
 import { useEffect, useRef } from 'react'
 import { NotionRenderer } from 'react-notion-x'
-
 import EmojiReaction from '@/components/EmojiReaction'
 import emojisData from '@/data/emojis.json'
 
@@ -122,6 +121,13 @@ const NotionPage = ({ post, className }) => {
           Modal,
           Pdf,
           Tweet,
+          EmojiReaction: ({ id }) => (
+            <EmojiReaction
+              id={id}
+              emojiList={['👍', '😂', '❤️', '🎉', '🤔']}
+              emojisData={emojisData}
+            />
+          ),
           ...customBlockComponents
         }}
       />
