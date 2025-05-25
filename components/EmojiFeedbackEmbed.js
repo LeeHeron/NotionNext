@@ -1,4 +1,3 @@
-// components/EmojiFeedbackEmbed.jsx
 import { useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import EmojiFeedback from './EmojiFeedback';
