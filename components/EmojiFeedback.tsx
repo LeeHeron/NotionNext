@@ -119,13 +119,11 @@ const EmojiFeedback: React.FC<EmojiFeedbackProps> = ({ paragraphId }) => {
       <div
         className="
           tag-list
-          flex-[0_0_75%]
-          flex flex-wrap
-          gap-2
+          flex-1
+          flex flex-wrap gap-2
           bg-gray-50 border border-gray-300
           rounded-lg p-3 min-h-[40px]
           max-w-full
-          overflow-visible
         "
       >
         {tags.map(t => {
@@ -134,18 +132,17 @@ const EmojiFeedback: React.FC<EmojiFeedbackProps> = ({ paragraphId }) => {
             <span
               key={t.tag}
               className={`tag-item
-                  flex items-center justify-center cursor-pointer
-                  px-3 py-1
-                  rounded-full
-                  text-sm truncate
-                  select-none
-                  transition-colors duration-200
-                  ${
-                    liked
-                      ? 'bg-blue-600 text-white shadow-md'
-                      : 'bg-gray-300 text-gray-900 hover:bg-gray-400'
-                  }
-                `}
+                flex items-center justify-center cursor-pointer
+                px-3 py-1
+                rounded-full
+                text-sm truncate
+                select-none
+                transition-colors duration-200
+                ${
+                  liked
+                    ? 'bg-blue-600 text-white shadow-md'
+                    : 'bg-gray-300 text-gray-900 hover:bg-gray-400'
+                }`}
               onClick={() => likeTag(t.tag)}
               title={liked ? '你已点赞' : '点击点赞'}
               style={{ maxWidth: '160px' }}
@@ -158,16 +155,15 @@ const EmojiFeedback: React.FC<EmojiFeedbackProps> = ({ paragraphId }) => {
           <span className="text-gray-400 text-sm">暂无标签，快来添加吧～</span>
         )}
       </div>
-
+  
       {/* 右侧：输入框 */}
       <div
         className="
           tag-input
-          flex-[0_0_200px]
+          flex-1
           bg-white border border-gray-300
-          rounded-lg p-2
-          flex-shrink-0
-          w-full sm:w-auto
+          rounded-lg p-3
+          w-full
         "
       >
         <input
@@ -182,6 +178,7 @@ const EmojiFeedback: React.FC<EmojiFeedbackProps> = ({ paragraphId }) => {
       </div>
     </div>
   );
+  
 };
 
 export default EmojiFeedback;
