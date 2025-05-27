@@ -1,117 +1,138 @@
 // components/EmojiFeedback.tsx
-import React, { useState, useEffect, KeyboardEvent, MouseEvent } from 'react';
-
-interface TagDto {
-  tag: string;
-  by: string[];      // 点赞用户列表
-}
+import React, {
+  useState,
+  KeyboardEvent,
+  ChangeEvent,
+  MouseEvent,
+  ReactElement
+} from 'react';
 
 interface EmojiFeedbackProps {
   paragraphId: string;
 }
 
+interface TagDto {
+  tag: string;
+  by: string[];  // 点赞用户列表，可后续扩展
+}
+
+/**
+ * 标签反馈组件：左侧显示标签，右侧输入添加
+ */
 const EmojiFeedback: React.FC<EmojiFeedbackProps> = ({ paragraphId }) => {
   const userId =
     typeof window !== 'undefined'
       ? localStorage.getItem('userId') || 'guest'
       : 'guest';
 
+  // 所有标签数据
   const [tags, setTags] = useState<TagDto[]>([]);
+  // 输入框内容
   const [inputValue, setInputValue] = useState('');
-  const [error, setError] = useState<string>();
 
-  // 1️⃣ 首次加载，拉取已有标签
-  useEffect(() => {
-    fetch(`/api/tags?paragraphId=${paragraphId}`)
-      .then((r) => r.json())
-      .then((data: { tags: TagDto[] }) => setTags(data.tags || []))
-      .catch((e) => console.error(e));
-  }, [paragraphId]);
-
-  // 2️⃣ 添加新标签
+  // 添加标签
   const addTag = async (newTag: string) => {
-    if (!newTag.trim() || tags.find((t) => t.tag === newTag) || tags.length >= 10)
+    const trimmed = newTag.trim();
+    if (!trimmed || tags.find(t => t.tag === trimmed) || tags.length >= 10) {
+      setInputValue('');
       return;
-    try {
-      await fetch('/api/tags', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ paragraphId, tag: newTag, action: 'add', userId })
-      });
-      setTags([...tags, { tag: newTag, by: [] }]);
-    } catch (err) {
-      setError('提交失败');
     }
-  };
-
-  // 3️⃣ 点赞／取消点赞
-  const toggleVote = async (tag: string) => {
-    const t = tags.find((t) => t.tag === tag);
-    if (!t) return;
-    const has = t.by.includes(userId);
+    // 更新本地
+    const updated = tags.concat({ tag: trimmed, by: [] });
+    setTags(updated);
+    setInputValue('');
+    // TODO: POST 同步到后端：{ paragraphId, tag: trimmed, action: 'add', userId }
     try {
-      await fetch('/api/tags', {
+      await fetch('/api/feedback', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           paragraphId,
-          tag,
-          action: 'vote',
+          tag: trimmed,
+          action: 'add',
           userId
         })
       });
-      setTags(
-        tags.map((t) =>
-          t.tag === tag
-            ? {
-                tag,
-                by: has ? t.by.filter((u) => u !== userId) : [...t.by, userId]
-              }
-            : t
-        )
-      );
-    } catch {
-      setError('操作失败');
+    } catch (e) {
+      console.error(e);
     }
   };
 
-  // 处理键盘：回车或逗号添加
-  const onKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+  // 删除标签
+  const removeTag = async (idx: number) => {
+    const updated = tags.filter((_, i) => i !== idx);
+    setTags(updated);
+    // TODO: POST 同步到后端的删除逻辑（可选）
+  };
+
+  // 处理输入：回车或逗号添加
+  const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
     if ((e.key === 'Enter' || e.key === ',') && inputValue.trim()) {
       e.preventDefault();
-      addTag(inputValue.trim());
-      setInputValue('');
+      addTag(inputValue);
     }
   };
 
   return (
-    <div className="emoji-feedback-bar flex flex-wrap rounded-lg border p-2">
-      {tags.map((t) => (
-        <button
-          key={t.tag}
-          className={`
-            tag-item mr-2 mb-2 px-3 py-1 rounded-full
-            flex items-center
-            ${t.by.includes(userId) ? 'bg-blue-200' : 'bg-gray-200'}
-          `}
-          onClick={() => toggleVote(t.tag)}
-        >
-          <span className="mr-1">{t.tag}</span>
-          <span className="text-xs text-gray-600">({t.by.length})</span>
-        </button>
-      ))}
+    <div className="emoji-feedback-container flex items-start space-x-4">
+      {/* 左侧：标签列表 */}
+      <div
+        className="tag-list
+                   flex-1
+                   flex flex-wrap
+                   bg-gray-50 border border-gray-300
+                   rounded-lg p-2 min-h-[40px]"
+      >
+        {tags.map((t, i) => (
+          <span
+            key={t.tag}
+            className="tag-item
+                       flex items-center
+                       bg-gray-200 rounded-full
+                       px-3 py-1 mr-2 mb-2
+                       text-sm"
+          >
+            {t.tag}
+            <button
+              onClick={(e: MouseEvent) => {
+                e.preventDefault();
+                removeTag(i);
+              }}
+              className="ml-1 text-gray-500 hover:text-gray-700"
+            >
+              &times;
+            </button>
+          </span>
+        ))}
 
-      {tags.length < 10 && (
+        {/* 如果没有标签可以显示占位 */}
+        {tags.length === 0 && (
+          <span className="text-gray-400 text-sm">
+            暂无标签，快来添加吧～
+          </span>
+        )}
+      </div>
+
+      {/* 右侧：输入框 */}
+      <div className="tag-input
+                      w-40
+                      bg-white border border-gray-300
+                      rounded-lg p-2"
+      >
         <input
+          type="text"
           value={inputValue}
-          onChange={(e) => setInputValue(e.target.value)}
-          onKeyDown={onKeyDown}
-          placeholder="输入标签，回车或逗号添加"
-          className="flex-1 min-w-[100px] px-2 py-1 text-sm outline-none bg-transparent"
+          onChange={(e: ChangeEvent<HTMLInputElement>) =>
+            setInputValue(e.target.value)
+          }
+          onKeyDown={handleKeyDown}
+          placeholder="回车或逗号添加"
+          className="w-full
+                     text-sm
+                     outline-none
+                     bg-transparent"
         />
-      )}
-
-      {error && <div className="w-full text-red-500 text-xs mt-1">{error}</div>}
+      </div>
     </div>
   );
 };
