@@ -1,76 +1,71 @@
-// pages/api/feedback.js
 import { Octokit } from '@octokit/rest'
 
-const octokit = new Octokit({ auth: process.env.GITHUB_TOKEN })
+const octokit = new Octokit({
+  auth: process.env.GITHUB_TOKEN
+});
 
 const OWNER = 'LeeHeron';
 const REPO = 'emoji-collection';
-const ISSUE_NUMBER = 18 // 你存储 feedback 的 Issue 编号
+const ISSUE_NUMBER = 18;
 
 export default async function handler(req, res) {
-  const { method, body, query } = req
+  const { paragraphId, tag, action, userId } = req.method === 'POST' ? req.body : req.query;
 
-  const paragraphId = body.paragraphId || query.paragraphId
-  if (!paragraphId) {
-    return res.status(400).json({ error: 'paragraphId is required' })
-  }
+  if (!paragraphId) return res.status(400).json({ error: 'Missing paragraphId' });
 
+  // 获取现有数据
+  let issue;
   try {
-    const { data: issue } = await octokit.rest.issues.get({
+    issue = await octokit.rest.issues.get({
       owner: OWNER,
       repo: REPO,
       issue_number: ISSUE_NUMBER
-    })
+    });
+  } catch (err) {
+    return res.status(500).json({ error: 'Failed to fetch issue data' });
+  }
 
-    let store = {}
+  let json;
+  try {
+    json = JSON.parse(issue.data.body || '{"pages":{}}');
+  } catch {
+    json = { pages: {} };
+  }
+
+  if (!json.pages[paragraphId]) json.pages[paragraphId] = { tags: [] };
+  const tags = json.pages[paragraphId].tags;
+
+  if (req.method === 'GET') {
+    return res.status(200).json({ tags });
+  }
+
+  if (req.method === 'POST') {
+    if (!tag || !action || !userId)
+      return res.status(400).json({ error: 'Missing tag/action/userId' });
+
+    if (action === 'add') {
+      if (!tags.find(t => t.tag === tag)) {
+        tags.push({ tag, by: [] });
+      }
+    } else if (action === 'like') {
+      const found = tags.find(t => t.tag === tag);
+      if (found && !found.by.includes(userId)) {
+        found.by.push(userId);
+      }
+    }
+
     try {
-      store = JSON.parse(issue.body || '{}')
-    } catch {
-      store = {}
-    }
-
-    if (method === 'GET') {
-      const tags = store[paragraphId]?.tags || []
-      return res.status(200).json({ tags })
-    }
-
-    if (method === 'POST') {
-      const { tag, userId, action } = body
-      if (!tag || !userId || !action) {
-        return res.status(400).json({ error: 'tag, userId and action required' })
-      }
-
-      const tags = store[paragraphId]?.tags || []
-      const existing = tags.find(t => t.tag === tag)
-
-      if (action === 'add') {
-        if (!existing) tags.push({ tag, by: [] })
-      } else if (action === 'like') {
-        if (existing && !existing.by.includes(userId)) {
-          existing.by.push(userId)
-        }
-      } else if (action === 'unlike') {
-        if (existing) {
-          existing.by = existing.by.filter(u => u !== userId)
-        }
-      }
-
-      store[paragraphId] = { tags }
-
       await octokit.rest.issues.update({
         owner: OWNER,
         repo: REPO,
         issue_number: ISSUE_NUMBER,
-        body: JSON.stringify(store, null, 2)
-      })
-
-      return res.status(200).json({ ok: true, tags })
+        body: JSON.stringify(json, null, 2)
+      });
+      return res.status(200).json({ success: true });
+    } catch (err) {
+      return res.status(500).json({ error: 'Failed to update issue' });
     }
-
-    res.setHeader('Allow', ['GET', 'POST'])
-    res.status(405).end(`Method ${method} Not Allowed`)
-  } catch (err) {
-    console.error('API Error:', err)
-    res.status(500).json({ error: 'Internal server error' })
   }
+
+  return res.status(405).json({ error: 'Method not allowed' });
 }
