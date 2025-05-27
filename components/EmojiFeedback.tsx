@@ -1,10 +1,11 @@
+// components/EmojiFeedback.tsx
 import React, {
   useState,
   useEffect,
   KeyboardEvent,
   ChangeEvent,
   MouseEvent,
-  ReactElement
+  ReactElement,
 } from 'react';
 
 interface EmojiFeedbackProps {
@@ -16,30 +17,41 @@ interface TagDto {
   by: string[]; // 点赞用户ID列表
 }
 
+// 生成或获取唯一用户ID
+function getUserId(): string {
+  if (typeof window === 'undefined') return 'guest';
+  let id = localStorage.getItem('userId');
+  if (!id) {
+    id = 'user_' + Math.random().toString(36).slice(2, 10);
+    localStorage.setItem('userId', id);
+  }
+  return id;
+}
+
 const EmojiFeedback: React.FC<EmojiFeedbackProps> = ({ paragraphId }) => {
-  const userId =
-    typeof window !== 'undefined'
-      ? localStorage.getItem('userId') || 'guest'
-      : 'guest';
+  const userId = getUserId();
 
   const [tags, setTags] = useState<TagDto[]>([]);
   const [inputValue, setInputValue] = useState('');
 
-  // 获取现有标签
+  // 从后端加载已有标签
   useEffect(() => {
-    const fetchTags = async () => {
+    async function fetchTags() {
       try {
-        const res = await fetch(`/api/feedback?paragraphId=${paragraphId}`);
+        const res = await fetch(`/api/feedback?paragraphId=${encodeURIComponent(paragraphId)}`);
+        if (!res.ok) throw new Error('Failed to load tags');
         const data = await res.json();
-        setTags(data.tags || []);
-      } catch (err) {
-        console.error(err);
+        if (data.tags && Array.isArray(data.tags)) {
+          setTags(data.tags);
+        }
+      } catch (e) {
+        console.error(e);
       }
-    };
+    }
     fetchTags();
   }, [paragraphId]);
 
-  // 添加新标签
+  // 添加标签
   const addTag = async (newTag: string) => {
     const trimmed = newTag.trim();
     if (!trimmed || tags.find(t => t.tag === trimmed) || tags.length >= 10) {
@@ -49,6 +61,8 @@ const EmojiFeedback: React.FC<EmojiFeedbackProps> = ({ paragraphId }) => {
     const updated = [...tags, { tag: trimmed, by: [] }];
     setTags(updated);
     setInputValue('');
+
+    // 同步到后端
     try {
       await fetch('/api/feedback', {
         method: 'POST',
@@ -57,8 +71,8 @@ const EmojiFeedback: React.FC<EmojiFeedbackProps> = ({ paragraphId }) => {
           paragraphId,
           tag: trimmed,
           action: 'add',
-          userId
-        })
+          userId,
+        }),
       });
     } catch (e) {
       console.error(e);
@@ -66,30 +80,38 @@ const EmojiFeedback: React.FC<EmojiFeedbackProps> = ({ paragraphId }) => {
   };
 
   // 点赞标签
-  const likeTag = async (index: number) => {
-    const tagItem = tags[index];
-    if (tagItem.by.includes(userId)) return; // 已点赞则不重复
+  const likeTag = async (tag: string) => {
+    // 找到该标签
+    const target = tags.find(t => t.tag === tag);
+    if (!target) return;
 
-    const updatedTags = [...tags];
-    updatedTags[index].by.push(userId);
-    setTags(updatedTags);
+    // 如果用户已经点过赞了，忽略
+    if (target.by.includes(userId)) return;
 
+    // 更新本地状态
+    const updated = tags.map(t =>
+      t.tag === tag ? { ...t, by: [...t.by, userId] } : t
+    );
+    setTags(updated);
+
+    // 同步点赞到后端
     try {
       await fetch('/api/feedback', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           paragraphId,
-          tag: tagItem.tag,
+          tag,
           action: 'like',
-          userId
-        })
+          userId,
+        }),
       });
     } catch (e) {
       console.error(e);
     }
   };
 
+  // 处理输入：回车或逗号添加
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
     if ((e.key === 'Enter' || e.key === ',') && inputValue.trim()) {
       e.preventDefault();
@@ -100,29 +122,31 @@ const EmojiFeedback: React.FC<EmojiFeedbackProps> = ({ paragraphId }) => {
   return (
     <div className="emoji-feedback-container flex items-start space-x-4">
       {/* 左侧：标签列表 */}
-      <div className="tag-list flex-1 flex flex-wrap bg-gray-50 border border-gray-300 rounded-lg p-2 min-h-[40px]">
-        {tags.map((t, i) => (
-          <span
-            key={t.tag}
-            className="tag-item flex items-center bg-gray-200 rounded-full px-3 py-1 mr-2 mb-2 text-sm"
-          >
-            {t.tag}
-            <button
-              onClick={(e: MouseEvent) => {
-                e.preventDefault();
-                likeTag(i);
-              }}
-              className={`ml-2 text-xs font-semibold ${
-                t.by.includes(userId)
-                  ? 'text-blue-600 font-bold'
-                  : 'text-gray-500 hover:text-blue-500'
-              }`}
-              title="点击赞同该标签"
+      <div
+        className="tag-list
+                   flex-1
+                   flex flex-wrap
+                   bg-gray-50 border border-gray-300
+                   rounded-lg p-2 min-h-[40px]"
+      >
+        {tags.map(t => {
+          const liked = t.by.includes(userId);
+          return (
+            <span
+              key={t.tag}
+              className={`tag-item
+                          flex items-center cursor-pointer
+                          px-3 py-1 mr-2 mb-2
+                          rounded-full
+                          text-sm
+                          ${liked ? 'bg-blue-400 text-white' : 'bg-gray-200 text-gray-800'}`}
+              onClick={() => likeTag(t.tag)}
+              title={liked ? '你已点赞' : '点击点赞'}
             >
-              {t.by.length}
-            </button>
-          </span>
-        ))}
+              {t.tag} <span className="ml-1 font-semibold">{t.by.length}</span>
+            </span>
+          );
+        })}
 
         {tags.length === 0 && (
           <span className="text-gray-400 text-sm">暂无标签，快来添加吧～</span>
@@ -130,16 +154,20 @@ const EmojiFeedback: React.FC<EmojiFeedbackProps> = ({ paragraphId }) => {
       </div>
 
       {/* 右侧：输入框 */}
-      <div className="tag-input w-40 bg-white border border-gray-300 rounded-lg p-2">
+      <div
+        className="tag-input
+                    w-40
+                    bg-white border border-gray-300
+                    rounded-lg p-2"
+      >
         <input
           type="text"
           value={inputValue}
-          onChange={(e: ChangeEvent<HTMLInputElement>) =>
-            setInputValue(e.target.value)
-          }
+          onChange={(e: ChangeEvent<HTMLInputElement>) => setInputValue(e.target.value)}
           onKeyDown={handleKeyDown}
           placeholder="回车或逗号添加"
           className="w-full text-sm outline-none bg-transparent"
+          maxLength={20}
         />
       </div>
     </div>
