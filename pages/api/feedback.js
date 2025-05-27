@@ -1,8 +1,7 @@
 // pages/api/feedback.js
-
 export default async function handler(req, res) {
   const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
-  const GITHUB_REPO  = process.env.GITHUB_REPO;      // e.g. "username/repo"
+  const GITHUB_REPO  = process.env.GITHUB_REPO;      // e.g. "user/repo"
   const ISSUE_NUMBER = process.env.FEEDBACK_ISSUE_NUMBER;
   const API_URL      = `https://api.github.com/repos/${GITHUB_REPO}/issues/${ISSUE_NUMBER}`;
 
@@ -12,81 +11,96 @@ export default async function handler(req, res) {
       .json({ message: 'Missing GITHUB_TOKEN, GITHUB_REPO or FEEDBACK_ISSUE_NUMBER' });
   }
 
-  // 拉取标签
+  // 1️⃣ 先读取 Issue Body，解析 JSON
+  async function readData() {
+    const r = await fetch(API_URL, {
+      headers: { Authorization: `token ${GITHUB_TOKEN}` }
+    });
+    if (!r.ok) throw new Error(`GitHub ${r.status}`);
+    const issue = await r.json();
+    return JSON.parse(issue.body || '{}');
+  }
+
+  // 2️⃣ 把新数据写回 Issue Body
+  async function writeData(data) {
+    const r = await fetch(API_URL, {
+      method: 'PATCH',
+      headers: {
+        Authorization: `token ${GITHUB_TOKEN}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ body: JSON.stringify(data) })
+    });
+    if (!r.ok) throw new Error(`GitHub PATCH ${r.status}`);
+    return await r.json();
+  }
+
+  // GET ?paragraphId=para-0
   if (req.method === 'GET') {
+    const { paragraphId } = req.query;
     try {
-      const r = await fetch(API_URL, {
-        headers: { Authorization: `token ${GITHUB_TOKEN}` }
-      });
-      if (!r.ok) throw new Error(`GitHub ${r.status}`);
-      const issue = await r.json();
-      const data  = JSON.parse(issue.body || '{}');
-      return res.status(200).json({ tags: data.tags || [] });
+      const data = await readData();
+      // 确保 data.pages 存在
+      const pages = data.pages || {};
+      const tags  = pages[paragraphId] || [];
+      return res.status(200).json({ tags });
     } catch (err) {
       console.error(err);
       return res.status(500).json({ message: 'Failed to read tags' });
     }
   }
 
-  // 新增或投票
+  // POST { paragraphId, tag, action, userId }
   if (req.method === 'POST') {
     const { paragraphId, tag, action, userId } = req.body;
     if (!paragraphId || !tag || !action || !userId) {
       return res
         .status(400)
-        .json({ message: 'Request must include paragraphId, tag, action and userId' });
+        .json({ message: 'Require paragraphId, tag, action, userId' });
     }
 
     try {
-      // 1) 读现有数据
-      const r1 = await fetch(API_URL, {
-        headers: { Authorization: `token ${GITHUB_TOKEN}` }
-      });
-      if (!r1.ok) throw new Error(`GitHub ${r1.status}`);
-      const issue = await r1.json();
-      const data  = JSON.parse(issue.body || '{}');
-      const tags  = data.tags || [];
+      const data  = await readData();
+      const pages = data.pages || {};
+      const list  = pages[paragraphId] || [];  // 当前段落的标签数组
 
-      // 2) 更新数组
-      let updated = tags;
+      let updatedList;
       if (action === 'add') {
-        if (!tags.find(t => t.tag === tag) && tags.length < 10) {
-          updated = tags.concat({ tag, by: [] });
+        // 新增标签
+        if (!list.find(t => t.tag === tag) && list.length < 10) {
+          updatedList = list.concat({ tag, by: [] });
+        } else {
+          updatedList = list;
         }
-      } else if (action === 'vote') {
-        updated = tags.map(t => {
-          if (t.tag === tag) {
-            const has = t.by.includes(userId);
-            return {
-              tag: t.tag,
-              by: has ? t.by.filter(u => u !== userId) : t.by.concat(userId)
-            };
-          }
-          return t;
+      } else {
+        // 点赞 or 取消
+        updatedList = list.map(t => {
+          if (t.tag !== tag) return t;
+          const has = t.by.includes(userId);
+          return {
+            tag: t.tag,
+            by: has ? t.by.filter(u => u !== userId) : t.by.concat(userId)
+          };
         });
       }
 
-      // 3) 写回 Issue body
-      const r2 = await fetch(API_URL, {
-        method: 'PATCH',
-        headers: {
-          Authorization: `token ${GITHUB_TOKEN}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          body: JSON.stringify({ tags: updated })
-        })
-      });
-      if (!r2.ok) throw new Error(`GitHub PATCH ${r2.status}`);
+      // 把更新写回 data.pages[paragraphId]
+      const newData = {
+        ...data,
+        pages: {
+          ...pages,
+          [paragraphId]: updatedList
+        }
+      };
 
-      return res.status(200).json({ tags: updated });
+      await writeData(newData);
+      return res.status(200).json({ tags: updatedList });
     } catch (err) {
       console.error(err);
       return res.status(500).json({ message: 'Failed to update tags' });
     }
   }
 
-  // 其它方法
   res.setHeader('Allow', ['GET', 'POST']);
   res.status(405).end(`Method ${req.method} Not Allowed`);
 }
