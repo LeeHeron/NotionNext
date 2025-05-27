@@ -1,30 +1,19 @@
-import React, { useState } from 'react';
-import EmojiPicker from 'emoji-picker-react';
-
-const EmojiFeedback = ({ paragraphId }) => {
-  const [chosenEmoji, setChosenEmoji] = useState(null);
-  const [showPicker, setShowPicker] = useState(false);
-
-  const onEmojiClick = (emojiData) => {
-    setChosenEmoji(emojiData);
+// components/EmojiFeedback.jsx
+const handleEmojiClick = async (emojiData) => {
     setShowPicker(false);
-
-    // TODO: 将反馈数据发送到 GitHub 仓库或其他后端服务
-    // 例如，使用 fetch 或 axios 发送 POST 请求
+    if (onSelect) {
+      onSelect(emojiData.emoji);
+    }
+  
+    await fetch('/api/feedback', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        emoji: emojiData.emoji,
+        paragraphId: paragraphId, // 从 props 中获取的段落 ID
+      }),
+    });
   };
-
-  return (
-    <div className="emoji-feedback">
-      <button onClick={() => setShowPicker(!showPicker)}>
-        {chosenEmoji ? chosenEmoji.emoji : '😊'}
-      </button>
-      {showPicker && (
-        <div className="emoji-picker">
-          <EmojiPicker onEmojiClick={onEmojiClick} />
-        </div>
-      )}
-    </div>
-  );
-};
-
-export default EmojiFeedback;
+  

@@ -1,3 +1,4 @@
+// pages/api/feedback.js
 export default async function handler(req, res) {
     if (req.method === 'POST') {
       const { emoji, paragraphId } = req.body;
