@@ -114,58 +114,32 @@ const EmojiFeedback: React.FC<EmojiFeedbackProps> = ({ paragraphId }) => {
   };
 
   return (
-    <div className="emoji-feedback-container flex flex-col sm:flex-row items-start space-y-4 sm:space-y-0 sm:space-x-4 w-full max-w-full">
-      {/* 左侧：标签列表 */}
-      <div
-        className="
-          tag-list
-          flex-1
-          flex flex-wrap gap-2
-          bg-gray-50 border border-gray-300
-          rounded-lg p-3 min-h-[40px]
-          max-w-full
-        "
-      >
+    <div className="emoji-feedback-container w-full space-y-4 sm:space-y-0 sm:flex sm:space-x-6">
+      {/* 标签列表 */}
+      <div className="flex-1 bg-gray-50 border border-gray-300 rounded-lg p-2 min-h-[40px] flex flex-wrap gap-1">
+        {tags.length === 0 && (
+          <span className="text-gray-400 text-sm">无人锐评</span>
+        )}
         {tags.map(t => {
           const liked = t.by.includes(userId);
           return (
             <span
               key={t.tag}
-              className={`tag-item
-                flex items-center justify-center cursor-pointer
-                px-3 py-1
-                rounded-full
-                text-sm truncate
-                select-none
-                transition-colors duration-200
-                ${
-                  liked
-                    ? 'bg-blue-600 text-white shadow-md'
-                    : 'bg-gray-300 text-gray-900 hover:bg-gray-400'
-                }`}
+              className={`flex items-center cursor-pointer px-2 py-1 rounded-full text-sm truncate transition-colors
+                ${liked ? 'bg-blue-600 text-white shadow-sm' : 'bg-gray-200 text-gray-800 hover:bg-gray-300'}
+              `}
               onClick={() => likeTag(t.tag)}
               title={liked ? '你已点赞' : '点击点赞'}
-              style={{ maxWidth: '160px' }}
             >
-              {t.tag} <span className="ml-1 font-semibold">{t.by.length}</span>
+              {t.tag}
+              <span className="ml-1 font-semibold">{t.by.length}</span>
             </span>
           );
         })}
-        {tags.length === 0 && (
-          <span className="text-gray-400 text-sm">暂无标签，快来添加吧～</span>
-        )}
       </div>
   
-      {/* 右侧：输入框 */}
-      <div
-        className="
-          tag-input
-          flex-1
-          bg-white border border-gray-300
-          rounded-lg p-3
-          w-full
-        "
-      >
+      {/* 输入框 */}
+      <div className="flex-1 bg-white border border-gray-300 rounded-lg p-2">
         <input
           type="text"
           value={inputValue}
@@ -178,6 +152,7 @@ const EmojiFeedback: React.FC<EmojiFeedbackProps> = ({ paragraphId }) => {
       </div>
     </div>
   );
+  
   
 };
 
