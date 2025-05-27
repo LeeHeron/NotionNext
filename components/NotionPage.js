@@ -7,6 +7,11 @@ import dynamic from 'next/dynamic'
 import { useEffect, useRef } from 'react'
 import { NotionRenderer } from 'react-notion-x'
 
+const EmojiFeedbackEmbed = dynamic(
+  () => import('@/components/EmojiFeedbackEmbed'),
+  { ssr: false }
+)
+
 /**
  * 整个站点的核心组件
  * 将Notion数据渲染成网页
@@ -136,6 +141,7 @@ const NotionPage = ({ post, className }) => {
 
       <AdEmbed />
       <PrismMac />
+      <EmojiFeedbackEmbed />
     </div>
   )
 }
