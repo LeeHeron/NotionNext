@@ -1,100 +1,117 @@
 // components/EmojiFeedback.tsx
-import React, {
-  useState,
-  KeyboardEvent,
-  ChangeEvent,
-  MouseEvent
-} from 'react';
+import React, { useState, useEffect, KeyboardEvent, MouseEvent } from 'react';
+
+interface TagDto {
+  tag: string;
+  by: string[];      // 点赞用户列表
+}
 
 interface EmojiFeedbackProps {
-  paragraphId: string; // 当前段落 ID，可用于后端同步
+  paragraphId: string;
 }
 
 const EmojiFeedback: React.FC<EmojiFeedbackProps> = ({ paragraphId }) => {
-  const [tags, setTags] = useState<string[]>([]);
-  const [inputValue, setInputValue] = useState('');
+  const userId =
+    typeof window !== 'undefined'
+      ? localStorage.getItem('userId') || 'guest'
+      : 'guest';
 
-  // 添加新标签（去重，至多 10 个）
-  const addTag = (tag: string) => {
-    const trimmed = tag.trim();
-    if (
-      trimmed &&
-      !tags.includes(trimmed) &&
-      tags.length < 10
-    ) {
-      setTags([...tags, trimmed]);
-      // TODO: 同步到后端：POST { paragraphId, tags: [...tags, trimmed] }
+  const [tags, setTags] = useState<TagDto[]>([]);
+  const [inputValue, setInputValue] = useState('');
+  const [error, setError] = useState<string>();
+
+  // 1️⃣ 首次加载，拉取已有标签
+  useEffect(() => {
+    fetch(`/api/tags?paragraphId=${paragraphId}`)
+      .then((r) => r.json())
+      .then((data: { tags: TagDto[] }) => setTags(data.tags || []))
+      .catch((e) => console.error(e));
+  }, [paragraphId]);
+
+  // 2️⃣ 添加新标签
+  const addTag = async (newTag: string) => {
+    if (!newTag.trim() || tags.find((t) => t.tag === newTag) || tags.length >= 10)
+      return;
+    try {
+      await fetch('/api/tags', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ paragraphId, tag: newTag, action: 'add', userId })
+      });
+      setTags([...tags, { tag: newTag, by: [] }]);
+    } catch (err) {
+      setError('提交失败');
     }
   };
 
-  // 删除指定索引的标签
-  const removeTag = (idx: number) => {
-    setTags(tags.filter((_, i) => i !== idx));
-    // TODO: 同步到后端：POST { paragraphId, tags: tags.filter(...) }
+  // 3️⃣ 点赞／取消点赞
+  const toggleVote = async (tag: string) => {
+    const t = tags.find((t) => t.tag === tag);
+    if (!t) return;
+    const has = t.by.includes(userId);
+    try {
+      await fetch('/api/tags', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          paragraphId,
+          tag,
+          action: 'vote',
+          userId
+        })
+      });
+      setTags(
+        tags.map((t) =>
+          t.tag === tag
+            ? {
+                tag,
+                by: has ? t.by.filter((u) => u !== userId) : [...t.by, userId]
+              }
+            : t
+        )
+      );
+    } catch {
+      setError('操作失败');
+    }
   };
 
-  // 监听键盘：回车或逗号触发添加
-  const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
-    if (
-      (e.key === 'Enter' || e.key === ',') &&
-      inputValue.trim()
-    ) {
+  // 处理键盘：回车或逗号添加
+  const onKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+    if ((e.key === 'Enter' || e.key === ',') && inputValue.trim()) {
       e.preventDefault();
-      addTag(inputValue);
+      addTag(inputValue.trim());
       setInputValue('');
     }
   };
 
-  // 监听输入框变化
-  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setInputValue(e.target.value);
-  };
-
   return (
-    <div
-      className="emoji-feedback-bar
-                 flex flex-wrap items-center
-                 rounded-lg border border-gray-300
-                 p-2"
-    >
-      {tags.map((tag, i) => (
-        <span
-          key={i}
-          className="tag-item
-                     flex items-center
-                     bg-gray-200 rounded-full
-                     px-3 py-1
-                     mr-2 mb-2
-                     text-sm"
+    <div className="emoji-feedback-bar flex flex-wrap rounded-lg border p-2">
+      {tags.map((t) => (
+        <button
+          key={t.tag}
+          className={`
+            tag-item mr-2 mb-2 px-3 py-1 rounded-full
+            flex items-center
+            ${t.by.includes(userId) ? 'bg-blue-200' : 'bg-gray-200'}
+          `}
+          onClick={() => toggleVote(t.tag)}
         >
-          <span>{tag}</span>
-          <button
-            onClick={(e: MouseEvent) => {
-              e.preventDefault();
-              removeTag(i);
-            }}
-            className="ml-1 text-gray-500 hover:text-gray-700"
-          >
-            &times;
-          </button>
-        </span>
+          <span className="mr-1">{t.tag}</span>
+          <span className="text-xs text-gray-600">({t.by.length})</span>
+        </button>
       ))}
 
-      {/* 仅在标签数 < 10 时显示输入框 */}
       {tags.length < 10 && (
         <input
-          type="text"
-          className="flex-1 min-w-[100px]
-                     outline-none
-                     text-sm
-                     px-1 py-1
-                     bg-transparent"
-          placeholder="输入标签，回车或逗号添加"
           value={inputValue}
-          onChange={handleChange}
-          onKeyDown={handleKeyDown}
+          onChange={(e) => setInputValue(e.target.value)}
+          onKeyDown={onKeyDown}
+          placeholder="输入标签，回车或逗号添加"
+          className="flex-1 min-w-[100px] px-2 py-1 text-sm outline-none bg-transparent"
         />
       )}
+
+      {error && <div className="w-full text-red-500 text-xs mt-1">{error}</div>}
     </div>
   );
 };
