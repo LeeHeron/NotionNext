@@ -136,7 +136,6 @@ const NotionPage = ({ post, className }) => {
 
       <AdEmbed />
       <PrismMac />
-      <EmojiFeedbackEmbed />
     </div>
   )
 }
@@ -268,10 +267,6 @@ const PrismMac = dynamic(() => import('@/components/PrismMac'), {
 const TweetEmbed = dynamic(() => import('react-tweet-embed'), {
   ssr: false
 })
-
-const EmojiFeedbackEmbed = dynamic(() => import('@/components/EmojiFeedbackEmbed'), {
-  ssr: false
-});
 
 /**
  * 文内google广告
