@@ -119,13 +119,13 @@ const EmojiFeedback: React.FC<EmojiFeedbackProps> = ({ paragraphId }) => {
       <div
         className="
           tag-list
-          flex-1
-          grid grid-cols-[repeat(auto-fit,minmax(60px,1fr))]
+          flex-[0_0_75%]
+          flex flex-wrap
           gap-2
           bg-gray-50 border border-gray-300
           rounded-lg p-3 min-h-[40px]
           max-w-full
-          overflow-x-auto
+          overflow-visible
         "
       >
         {tags.map(t => {
@@ -148,7 +148,7 @@ const EmojiFeedback: React.FC<EmojiFeedbackProps> = ({ paragraphId }) => {
                 `}
               onClick={() => likeTag(t.tag)}
               title={liked ? '你已点赞' : '点击点赞'}
-              style={{ maxWidth: '120px' }}
+              style={{ maxWidth: '160px' }}
             >
               {t.tag} <span className="ml-1 font-semibold">{t.by.length}</span>
             </span>
@@ -163,10 +163,11 @@ const EmojiFeedback: React.FC<EmojiFeedbackProps> = ({ paragraphId }) => {
       <div
         className="
           tag-input
-          w-full sm:w-44
+          flex-[0_0_200px]
           bg-white border border-gray-300
           rounded-lg p-2
           flex-shrink-0
+          w-full sm:w-auto
         "
       >
         <input
