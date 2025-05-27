@@ -1,101 +1,76 @@
-import { Octokit } from '@octokit/rest'
+// pages/api/feedback.js
+import { Octokit } from 'octokit'
 
 const octokit = new Octokit({ auth: process.env.GITHUB_TOKEN })
 
-const owner = LeeHeron
-const repo = process.env.GITHUB_REPO;
-const LABEL_PREFIX = '[emoji-feedback]' // 用于识别相关 issue
+const OWNER = 'LeeHeron';
+const REPO = 'emoji-collection';
+const ISSUE_NUMBER = 18 // 你存储 feedback 的 Issue 编号
 
 export default async function handler(req, res) {
-  const { method } = req
+  const { method, body, query } = req
 
-  if (method === 'GET') {
-    const { paragraphId } = req.query
-    if (!paragraphId) {
-      return res.status(400).json({ error: 'Missing paragraphId' })
-    }
-
-    try {
-      // 搜索 issue
-      const { data: issues } = await octokit.rest.issues.listForRepo({
-        owner,
-        repo,
-        state: 'open',
-        labels: `${LABEL_PREFIX}:${paragraphId}`
-      })
-
-      if (issues.length === 0) {
-        return res.status(200).json({ tags: [] })
-      }
-
-      const body = issues[0].body
-      const parsed = JSON.parse(body || '{}')
-      return res.status(200).json({ tags: parsed.tags || [] })
-    } catch (err) {
-      console.error(err)
-      return res.status(500).json({ error: 'Failed to fetch tags' })
-    }
+  const paragraphId = body.paragraphId || query.paragraphId
+  if (!paragraphId) {
+    return res.status(400).json({ error: 'paragraphId is required' })
   }
 
-  if (method === 'POST') {
-    const { paragraphId, tag, action, userId } = req.body
-    if (!paragraphId || !tag || !action || !userId) {
-      return res.status(400).json({ error: 'Missing fields' })
-    }
-
-    const label = `${LABEL_PREFIX}:${paragraphId}`
-
-    // 获取或创建对应段落的标签 issue
-    let issue = null
-    const { data: issues } = await octokit.rest.issues.listForRepo({
-      owner,
-      repo,
-      state: 'open',
-      labels: label
+  try {
+    const { data: issue } = await octokit.rest.issues.get({
+      owner: OWNER,
+      repo: REPO,
+      issue_number: ISSUE_NUMBER
     })
 
-    if (issues.length > 0) {
-      issue = issues[0]
-    } else {
-      const newIssue = await octokit.rest.issues.create({
-        owner,
-        repo,
-        title: `Tag feedback for paragraph ${paragraphId}`,
-        body: JSON.stringify({ tags: [] }, null, 2),
-        labels: [label]
-      })
-      issue = newIssue.data
-    }
-
-    // 更新标签列表
-    let content = {}
+    let store = {}
     try {
-      content = JSON.parse(issue.body || '{}')
+      store = JSON.parse(issue.body || '{}')
     } catch {
-      content = { tags: [] }
+      store = {}
     }
 
-    const tags = content.tags || []
+    if (method === 'GET') {
+      const tags = store[paragraphId]?.tags || []
+      return res.status(200).json({ tags })
+    }
 
-    if (action === 'add') {
-      if (!tags.find(t => t.tag === tag)) {
-        tags.push({ tag, by: [] })
+    if (method === 'POST') {
+      const { tag, userId, action } = body
+      if (!tag || !userId || !action) {
+        return res.status(400).json({ error: 'tag, userId and action required' })
       }
+
+      const tags = store[paragraphId]?.tags || []
+      const existing = tags.find(t => t.tag === tag)
+
+      if (action === 'add') {
+        if (!existing) tags.push({ tag, by: [] })
+      } else if (action === 'like') {
+        if (existing && !existing.by.includes(userId)) {
+          existing.by.push(userId)
+        }
+      } else if (action === 'unlike') {
+        if (existing) {
+          existing.by = existing.by.filter(u => u !== userId)
+        }
+      }
+
+      store[paragraphId] = { tags }
+
+      await octokit.rest.issues.update({
+        owner: OWNER,
+        repo: REPO,
+        issue_number: ISSUE_NUMBER,
+        body: JSON.stringify(store, null, 2)
+      })
+
+      return res.status(200).json({ ok: true, tags })
     }
 
-    // 可扩展更多 action，例如点赞、删除等
-
-    // 更新 issue 内容
-    await octokit.rest.issues.update({
-      owner,
-      repo,
-      issue_number: issue.number,
-      body: JSON.stringify({ tags }, null, 2)
-    })
-
-    return res.status(200).json({ ok: true, tags })
+    res.setHeader('Allow', ['GET', 'POST'])
+    res.status(405).end(`Method ${method} Not Allowed`)
+  } catch (err) {
+    console.error('API Error:', err)
+    res.status(500).json({ error: 'Internal server error' })
   }
-
-  res.setHeader('Allow', ['GET', 'POST'])
-  res.status(405).end(`Method ${method} Not Allowed`)
 }
