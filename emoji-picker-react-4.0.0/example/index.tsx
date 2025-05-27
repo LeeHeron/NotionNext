@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { EmojiPicker } from 'emoji-picker-react';
+import { EmojiPicker } from '../.';
 
 const App = () => {
   return (
