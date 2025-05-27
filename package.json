@@ -26,7 +26,6 @@
     "version": "echo $npm_package_version"
   },
   "dependencies": {
-    "@charkour/react-reactions": "^0.11.0",
     "@clerk/localizations": "^3.0.4",
     "@clerk/nextjs": "^5.1.5",
     "@headlessui/react": "^1.7.15",

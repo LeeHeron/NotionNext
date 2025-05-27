@@ -1,146 +1,102 @@
 // components/EmojiFeedback.tsx
-import React, { useState, useEffect, ReactElement } from 'react'
-import dynamic from 'next/dynamic'
-
-// 动态导入，禁用 SSR
-const ReactionBarSelector = dynamic(
-  () =>
-    import('@charkour/react-reactions').then(
-      (mod) => mod.ReactionBarSelector
-    ),
-  { ssr: false }
-)
-const ReactionCounter = dynamic(
-  () =>
-    import('@charkour/react-reactions').then(
-      (mod) => mod.ReactionCounter
-    ),
-  { ssr: false }
-)
+import React, {
+  useState,
+  KeyboardEvent,
+  ChangeEvent,
+  MouseEvent
+} from 'react';
 
 interface EmojiFeedbackProps {
-  paragraphId: string
-}
-
-interface ReactionItem {
-  key: string
-  label: string
-  count: number
-  reacted: boolean
-  node: ReactElement
-  by: string[]      // 本地存储所有点过该反馈的用户 ID
+  paragraphId: string; // 当前段落 ID，可用于后端同步
 }
 
 const EmojiFeedback: React.FC<EmojiFeedbackProps> = ({ paragraphId }) => {
-  // 本地模拟 userId，实际项目可替换为登录用户 ID
-  const userId =
-    typeof window !== 'undefined'
-      ? localStorage.getItem('userId') || 'guest'
-      : 'guest'
+  const [tags, setTags] = useState<string[]>([]);
+  const [inputValue, setInputValue] = useState('');
 
-  // 初始几种反馈选项
-  const [reactions, setReactions] = useState<ReactionItem[]>([
-    {
-      key: 'like',
-      label: '👍',
-      count: 0,
-      reacted: false,
-      node: <span>👍</span>,
-      by: []
-    },
-    {
-      key: 'love',
-      label: '❤️',
-      count: 0,
-      reacted: false,
-      node: <span>❤️</span>,
-      by: []
-    },
-    {
-      key: 'laugh',
-      label: '😂',
-      count: 0,
-      reacted: false,
-      node: <span>😂</span>,
-      by: []
+  // 添加新标签（去重，至多 10 个）
+  const addTag = (tag: string) => {
+    const trimmed = tag.trim();
+    if (
+      trimmed &&
+      !tags.includes(trimmed) &&
+      tags.length < 10
+    ) {
+      setTags([...tags, trimmed]);
+      // TODO: 同步到后端：POST { paragraphId, tags: [...tags, trimmed] }
     }
-  ])
-  const [showSelector, setShowSelector] = useState(false)
+  };
 
-  // 页面加载时，可选：从后端拉取历史反馈并初始化
-  useEffect(() => {
-    fetch(`/api/feedback?paragraphId=${paragraphId}`)
-      .then((res) => res.json())
-      .then((data: { reactions: ReactionItem[] }) => {
-        if (data.reactions) setReactions(data.reactions)
-      })
-      .catch(() => {
-        /* 忽略失败 */ 
-      })
-  }, [paragraphId])
+  // 删除指定索引的标签
+  const removeTag = (idx: number) => {
+    setTags(tags.filter((_, i) => i !== idx));
+    // TODO: 同步到后端：POST { paragraphId, tags: tags.filter(...) }
+  };
 
-  // 用户点击某个 reaction
-  const handleSelect = async (key: string) => {
-    setReactions((prev) =>
-      prev.map((r) => {
-        if (r.key === key) {
-          const hasReacted = r.by.includes(userId)
-          return {
-            ...r,
-            count: hasReacted ? r.count - 1 : r.count + 1,
-            reacted: !hasReacted,
-            by: hasReacted
-              ? r.by.filter((id) => id !== userId)
-              : [...r.by, userId]
-          }
-        }
-        return r
-      })
-    )
+  // 监听键盘：回车或逗号触发添加
+  const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+    if (
+      (e.key === 'Enter' || e.key === ',') &&
+      inputValue.trim()
+    ) {
+      e.preventDefault();
+      addTag(inputValue);
+      setInputValue('');
+    }
+  };
 
-    // 提交到后端
-    await fetch('/api/feedback', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ paragraphId, reaction: key, userId })
-    })
-  }
+  // 监听输入框变化
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setInputValue(e.target.value);
+  };
 
   return (
-    <div className="emoji-feedback-wrap">
-      {/* 统计条：注意 by 要传一个字符串（当前用户 ID） */}
-      <ReactionCounter
-        reactions={reactions.map((r) => ({
-          key: r.key,
-          label: r.label,
-          count: r.count,
-          node: r.node,
-          // by 字段里如果包含当前 userId，就会被高亮
-          by: r.by.includes(userId) ? userId : ''
-        }))}
-      />
+    <div
+      className="emoji-feedback-bar
+                 flex flex-wrap items-center
+                 rounded-lg border border-gray-300
+                 p-2"
+    >
+      {tags.map((tag, i) => (
+        <span
+          key={i}
+          className="tag-item
+                     flex items-center
+                     bg-gray-200 rounded-full
+                     px-3 py-1
+                     mr-2 mb-2
+                     text-sm"
+        >
+          <span>{tag}</span>
+          <button
+            onClick={(e: MouseEvent) => {
+              e.preventDefault();
+              removeTag(i);
+            }}
+            className="ml-1 text-gray-500 hover:text-gray-700"
+          >
+            &times;
+          </button>
+        </span>
+      ))}
 
-      {/* 切换按钮 */}
-      <button
-        className="reaction-toggle-btn"
-        onClick={() => setShowSelector((v) => !v)}
-      >
-        {showSelector ? '关闭反馈' : '添加反馈'}
-      </button>
-
-      {/* 弹出选择器 */}
-      {showSelector && (
-        <ReactionBarSelector
-          reactions={reactions.map((r) => ({
-            key: r.key,
-            label: r.label,
-            node: r.node
-          }))}
-          onSelect={handleSelect}
+      {/* 仅在标签数 < 10 时显示输入框 */}
+      {tags.length < 10 && (
+        <input
+          type="text"
+          className="flex-1 min-w-[100px]
+                     outline-none
+                     text-sm
+                     px-1 py-1
+                     bg-transparent"
+          placeholder="输入标签，回车或逗号添加"
+          value={inputValue}
+          onChange={handleChange}
+          onKeyDown={handleKeyDown}
         />
       )}
     </div>
-  )
-}
+  );
+};
 
-export default EmojiFeedback
+export default EmojiFeedback;
