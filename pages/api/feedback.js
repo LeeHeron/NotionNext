@@ -1,5 +1,4 @@
 // pages/api/feedback.js
-import fetch from 'node-fetch';
 
 export default async function handler(req, res) {
   const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
@@ -13,7 +12,7 @@ export default async function handler(req, res) {
       .json({ message: 'Missing GITHUB_TOKEN, GITHUB_REPO or FEEDBACK_ISSUE_NUMBER' });
   }
 
-  // GET ?paragraphId=xxx → 拉取所有标签
+  // 拉取标签
   if (req.method === 'GET') {
     try {
       const r = await fetch(API_URL, {
@@ -29,8 +28,7 @@ export default async function handler(req, res) {
     }
   }
 
-  // POST → 新增标签 or 点赞/取消
-  // body: { paragraphId, tag, action: 'add'|'vote', userId }
+  // 新增或投票
   if (req.method === 'POST') {
     const { paragraphId, tag, action, userId } = req.body;
     if (!paragraphId || !tag || !action || !userId) {
@@ -40,16 +38,16 @@ export default async function handler(req, res) {
     }
 
     try {
-      // 1) 先读现有 Issue body
+      // 1) 读现有数据
       const r1 = await fetch(API_URL, {
         headers: { Authorization: `token ${GITHUB_TOKEN}` }
       });
       if (!r1.ok) throw new Error(`GitHub ${r1.status}`);
       const issue = await r1.json();
       const data  = JSON.parse(issue.body || '{}');
-      const tags  = data.tags || [];  // Array of { tag: string, by: string[] }
+      const tags  = data.tags || [];
 
-      // 2) 根据 action 更新 tags 数组
+      // 2) 更新数组
       let updated = tags;
       if (action === 'add') {
         if (!tags.find(t => t.tag === tag) && tags.length < 10) {
@@ -68,7 +66,7 @@ export default async function handler(req, res) {
         });
       }
 
-      // 3) 把新数组写回 Issue body
+      // 3) 写回 Issue body
       const r2 = await fetch(API_URL, {
         method: 'PATCH',
         headers: {
@@ -88,7 +86,7 @@ export default async function handler(req, res) {
     }
   }
 
-  // 其它方法不允许
+  // 其它方法
   res.setHeader('Allow', ['GET', 'POST']);
   res.status(405).end(`Method ${req.method} Not Allowed`);
 }
