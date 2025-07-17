@@ -145,7 +145,7 @@ const EmojiFeedback: React.FC<EmojiFeedbackProps> = ({ paragraphId }) => {
           value={inputValue}
           onChange={(e: ChangeEvent<HTMLInputElement>) => setInputValue(e.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder="回车或逗号添加"
+          placeholder="回车添加,逗号可能会有bug"
           className="w-full text-sm outline-none bg-transparent"
           maxLength={20}
         />
