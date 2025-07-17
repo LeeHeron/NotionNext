@@ -139,7 +139,7 @@ const EmojiFeedback: React.FC<EmojiFeedbackProps> = ({ paragraphId }) => {
       </div>
   
       {/* 输入框 */}
-      <div className="flex-1 bg-white border border-gray-300 rounded-lg p-2">
+      <div className="flex-1 bg-white border border-gray-300 rounded-lg p-2 min-h-[40px]">
         <input
           type="text"
           value={inputValue}
