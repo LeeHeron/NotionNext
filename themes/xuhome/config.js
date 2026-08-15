@@ -3,7 +3,7 @@ const CONFIG = {
   XUHOME_HERO_ENABLE: true, // 首页显示 Hero 区
   XUHOME_HERO_TITLE: process.env.NEXT_PUBLIC_XUHOME_HERO_TITLE || '',
   XUHOME_HERO_BIO: process.env.NEXT_PUBLIC_XUHOME_HERO_BIO || '',
-  XUHOME_HERO_TEXTS: ['Hello.', 'Welcome.', 'Enjoy reading.'], // 打字机轮播文字
+  XUHOME_HERO_TEXTS: ['宇宙超人，睁开眼睛，我是沙福林', '博士，没想到现在不想松手的会是我', '不是吃白饭的蓝色大肥鱼哦' '菲八啾比', '多玛姆，我是来谈条件的',], // 打字机轮播文字
   XUHOME_HERO_TITLE_COLOR: '#0284c7', // Hero 标题颜色
   XUHOME_HERO_BIO_COLOR: '#475569', // Hero 简介颜色
   XUHOME_HERO_TYPE_SPEED: 80, // 打字速度（毫秒/字）
@@ -16,7 +16,7 @@ const CONFIG = {
   XUHOME_ARTICLE_RECOMMEND_POSTS: true, // 文章页显示推荐内容
   XUHOME_UPTIME_ENABLE: true, // 显示站点运行时长
   XUHOME_UPTIME_TITLE: 'Running',
-  XUHOME_UPTIME_SINCE: '2024-01-01', // 建站日期（YYYY-MM-DD）
+  XUHOME_UPTIME_SINCE: '2026-04-29', // 建站日期（YYYY-MM-DD）
 
   // 主题控制台配色
   XUHOME_COLOR_PRIMARY: '#0284c7',
