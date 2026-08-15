@@ -59,11 +59,11 @@ export default function NavBar(props) {
           href='/'
           className='flex items-center gap-2 text-[#0284c7] hover:opacity-80 transition-opacity shrink-0 no-underline'
         >
-          <span className='w-8 h-8 flex items-center justify-center bg-[#fde68a] border-2 border-[#0284c7] font-black text-lg transform -skew-x-12 shadow-[2px_2px_0px_0px_#0284c7]'>
-            <span className='transform skew-x-12'>
-              {siteConfig('TITLE')?.charAt(0) || 'X'}
-            </span>
-          </span>
+          <img
+            src={siteConfig('LOGO_URL', '', CONFIG)}
+            alt={siteConfig('TITLE') || 'Logo'}
+            className='w-8 h-8 object-contain shrink-0'
+          />
           <span className='font-black uppercase tracking-widest text-sm hidden sm:inline'>
             {siteConfig('TITLE')}
           </span>
