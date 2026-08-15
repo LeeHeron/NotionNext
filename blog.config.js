@@ -61,7 +61,7 @@ const BLOG = {
   ...require('./conf/dev.config'), // 开发、调试时需要关注的配置
 
   // 自定义外部脚本，外部样式
-  LOGO_URL: './public/favicon.ico', 
+  LOGO_URL: 'https://i0.hdslb.com/bfs/face/dd44c936944901f7a1d82c5fdb024fac36b2d4a7.jpg@128w_128h_1c_1s.webp', 
   CUSTOM_EXTERNAL_JS: [''], // e.g. ['http://xx.com/script.js','http://xx.com/script.js']
   CUSTOM_EXTERNAL_CSS: [''], // e.g. ['http://xx.com/style.css','http://xx.com/style.css']
 
