@@ -17,7 +17,7 @@ export default function Footer(props) {
             rel='noopener noreferrer'
             className='text-slate-400 dark:text-slate-500 hover:text-[#0284c7] transition-colors no-underline'
           >
-            XuHome Theme
+            仅供学习
           </a>
         </span>
       </div>
